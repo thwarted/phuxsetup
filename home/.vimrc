@@ -15,4 +15,8 @@ au BufRead,BufNewFile *.js.php             setfiletype javascript
 au BufRead,BufNewFile *.smarty             setfiletype smarty
 " only first line has comment market
 au FileType * setl fo-=r
+
+" consider trailing whitespace to be an error in the syntax highlight
 autocmd FileType python syntax match ErrorMsg '\s\+$'
+autocmd FileType puppet syntax match ErrorMsg '\s\+$'
+autocmd FileType ruby syntax match ErrorMsg '\s\+$'
