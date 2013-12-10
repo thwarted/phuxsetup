@@ -9,6 +9,12 @@ else
     PS1='\[\e[1;34m\]\u\[\e[0;39m\]@\[\e[1;32m\]\h\[\e[0;39m\]:\[\e[1;33m\]\w\[\e[0;39m\]\$ '
 fi
 
+case $TERM in
+    screen* )
+        PS1='\033k'$( hostname -s )'\033\\'"$PS1"
+        ;;
+esac
+
 alias ll='ls -l'
 alias df='df -x tmpfs -x rootfs -x devtmpfs'
 
