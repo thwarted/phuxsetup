@@ -11,7 +11,7 @@ fi
 
 case $TERM in
     screen* )
-        PS1='\033k'$( hostname -s )'\033\\'"$PS1"
+        PS1='\[\033k'$( hostname -s )'\033\\\]'"$PS1"
         ;;
 esac
 
