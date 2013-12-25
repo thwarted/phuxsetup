@@ -39,11 +39,12 @@ function _spawn_tmux() {
         if $TMUX has-session -t "$targetses"; then
             # found the requested session, attach to it
             $TMUX -2 new-session -s "$sessioninstance" -t "$targetses" 
+        else
+            # create a new detached session, set an option on it, and attach to it
+            $TMUX -2 \
+                new-session -d -s "$targetses" \; \
+                set -t "$targetses" destroy-unattached off \; \
+                new-session -s "$sessioninstance" -t "$targetses"
         fi
-        # create a new detached session, set an option on it, and attach to it
-        $TMUX -2 \
-            new-session -d -s "$targetses" \; \
-            set -t "$targetses" destroy-unattached off \; \
-            new-session -s "$sessioninstance" -t "$targetses"
     fi
 }
