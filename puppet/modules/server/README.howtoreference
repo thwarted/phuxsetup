@@ -1,0 +1,13 @@
+manifests/init.pp             => include server
+manifests/classname.pp        => include server::classname
+manifests/definition.pp       => server::definition { $title: ... }
+manifests/subdir/classname.pp => include server::subdir::classname
+
+files/a/b/c                   => puppet:///modules/server/a/b/c
+
+templates/t.erb               => template('server/t.erb')
+
+module custom functions can be put in:
+				lib/puppet/parser/functions/
+facter customizations can be put in:
+				lib/facter/

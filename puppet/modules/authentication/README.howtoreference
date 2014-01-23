@@ -1,0 +1,13 @@
+manifests/init.pp             => include authentication
+manifests/classname.pp        => include authentication::classname
+manifests/definition.pp       => authentication::definition { $title: ... }
+manifests/subdir/classname.pp => include authentication::subdir::classname
+
+files/a/b/c                   => puppet:///modules/authentication/a/b/c
+
+templates/t.erb               => template('authentication/t.erb')
+
+module custom functions can be put in:
+				lib/puppet/parser/functions/
+facter customizations can be put in:
+				lib/facter/

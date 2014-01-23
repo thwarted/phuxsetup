@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if [[ $EUID -ne 0 ]]; then
+    echo "$0: please run as root" >&2
+    exit 1
+fi
+
+noop=--noop
+if [[ "$1" == "--commit" ]]; then
+    noop=
+else
+    echo "$0: in --noop mode, specify --commit to apply changes" >&2
+    echo >&2
+    echo >&2
+fi
+
+meloc=$( readlink -f $( dirname "$0" ))
+
+cd "$meloc"/puppet
+
+puppet apply $noop \
+    --show_diff \
+    --verbose \
+    --confdir "$meloc"/puppet \
+    --vardir=/var/lib/puppet \
+    --rundir=/var/lib/puppet/run \
+    --logdir=/var/lib/puppet/log \
+    --ssldir=/var/lib/puppet/ssl \
+    --statedir=/var/lib/puppet/state \
+    --modulepath "$meloc"/puppet/modules/ \
+    ./manifests/site.pp

@@ -1,0 +1,13 @@
+manifests/init.pp             => include users
+manifests/classname.pp        => include users::classname
+manifests/definition.pp       => users::definition { $title: ... }
+manifests/subdir/classname.pp => include users::subdir::classname
+
+files/a/b/c                   => puppet:///modules/users/a/b/c
+
+templates/t.erb               => template('users/t.erb')
+
+module custom functions can be put in:
+				lib/puppet/parser/functions/
+facter customizations can be put in:
+				lib/facter/

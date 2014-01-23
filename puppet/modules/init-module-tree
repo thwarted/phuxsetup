@@ -1,0 +1,33 @@
+#!/bin/bash
+
+moddir="$1"
+
+[[ -d "$moddir" ]] && echo "$moddir already exists" && exit 1
+
+mkdir -p "$moddir"/{manifests,files,lib,templates}
+touch "$moddir"/{manifests,files,lib,templates}/.placeholder
+if [[ ! -e "$moddir"/manifests/init.pp ]]; then
+cat >"$moddir"/manifests/init.pp <<EOF
+
+class $moddir {
+
+}
+EOF
+fi
+
+cat >"$moddir"/README.howtoreference <<EOF
+manifests/init.pp             => include $moddir
+manifests/classname.pp        => include $moddir::classname
+manifests/definition.pp       => $moddir::definition { \$title: ... }
+manifests/subdir/classname.pp => include $moddir::subdir::classname
+
+files/a/b/c                   => puppet:///modules/$moddir/a/b/c
+
+templates/t.erb               => template('$moddir/t.erb')
+
+module custom functions can be put in:
+				lib/puppet/parser/functions/
+facter customizations can be put in:
+				lib/facter/
+EOF
+
