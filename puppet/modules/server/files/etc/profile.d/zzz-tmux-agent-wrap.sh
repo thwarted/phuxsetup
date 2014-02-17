@@ -32,8 +32,14 @@ function tmx() {
             if $SSHADD -l > /dev/null 2>&1; then
                 $LN -sf $SSH_AUTH_SOCK $NEWSOCK
                 SSH_AUTH_SOCK=$NEWSOCK _spawn_tmux "$@"
+            else
+                echo "tmx: agent appears to have no keys (agent locked?)" >&2
             fi
+        else
+            echo "tmx: SSH_AUTH_SOCK already redirected, odd state" >&2
         fi
+    else
+        echo "tmx: SSH_AUTH_SOCK is not set" >&2
     fi
 }
 
