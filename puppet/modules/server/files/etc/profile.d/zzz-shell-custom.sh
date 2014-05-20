@@ -18,6 +18,7 @@ esac
 alias ll='ls -l'
 alias df='df -x tmpfs -x rootfs -x devtmpfs'
 alias ppj='python -mjson.tool'
+alias psx='ps axwf'
 
 export LESS=-XR
 
@@ -30,4 +31,4 @@ fi
 
 pathmunge /usr/local/bin after
 
-export PS_FORMAT='user:10,pid,%cpu,%mem,vsz:8,rss:8,tty,stat,start,time,cmd'
+export PS_FORMAT='user:10,pid,%cpu,%mem,vsz:8,rss:8,tty,stat,start,time:11,cmd'
