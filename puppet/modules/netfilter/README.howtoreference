@@ -1,0 +1,13 @@
+manifests/init.pp             => include netfilter
+manifests/classname.pp        => include netfilter::classname
+manifests/definition.pp       => netfilter::definition { $title: ... }
+manifests/subdir/classname.pp => include netfilter::subdir::classname
+
+files/a/b/c                   => puppet:///modules/netfilter/a/b/c
+
+templates/t.erb               => template('netfilter/t.erb')
+
+module custom functions can be put in:
+				lib/puppet/parser/functions/
+facter customizations can be put in:
+				lib/facter/
