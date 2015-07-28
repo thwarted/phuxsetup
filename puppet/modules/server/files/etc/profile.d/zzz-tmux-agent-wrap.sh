@@ -6,6 +6,13 @@
 # connected to it multiple times at the same time), with the ssh-agent
 # connection available even if you get disconnected and reconnect
 #
+#  start or connect to an instance named "default"
+#     tmx
+#  list running instances
+#     tmx ls
+#  start or connect to an instance named "bone"
+#     tmx bone
+#
 # It starts up multiple tmux servers, one for each name, rather than one
 # server with multiple sessions in it.  This avoids the accidental killing
 # of all sessions while in one of them.  tmux "sessions" are kind of
