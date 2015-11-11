@@ -58,9 +58,7 @@ function _spawn_tmux() {
 
     if [ "$thename" = "ls" ]; then
         if [[ -d $SOCKDIR ]]; then
-            /bin/find $SOCKDIR -type s -exec /sbin/fuser {} \; 2>&1 |
-                /bin/awk -F '[[:space:]:]' '{ print $1 }' |
-                /usr/bin/xargs --no-run-if-empty -n 1 /bin/basename
+            lsof -F n $SOCKDIR/* | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
         else
             echo "$SOCKDIR not found." >&2
         fi
