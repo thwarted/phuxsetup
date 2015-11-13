@@ -30,14 +30,14 @@ function tmx() {
     esac
 
     # if the auth socket variable is empty, don't do anything
-    if [[ "$SSH_AUTH_SOCK" ]]; then
+    if [[ -n "$SSH_AUTH_SOCK" ]]; then
         # include USER to protect against shared HOME directories (rare)
         NEWSOCK=$HOME/.agent-sshtmux-$USER.sock
         if [[ "$SSH_AUTH_SOCK" != "$NEWSOCK" ]]; then
             # test if the auth sock we have is actually working
             # don't link to a dead socket
             if $SSHADD -l > /dev/null 2>&1; then
-                $LN -sf $SSH_AUTH_SOCK $NEWSOCK
+                $LN -sf "$SSH_AUTH_SOCK" "$NEWSOCK"
                 SSH_AUTH_SOCK=$NEWSOCK _spawn_tmux "$@"
             else
                 echo "tmx: agent appears to have no keys (agent locked?)" >&2
@@ -54,26 +54,22 @@ function _spawn_tmux() {
     local TMUX=/usr/bin/tmux
 
     local thename=${1:-default}
-    local SOCKDIR=/tmp/tmux-$EUID
+    local SOCKDIR=tmux-$EUID
 
     if [ "$thename" = "ls" ]; then
-        if [[ -d $SOCKDIR ]]; then
-            lsof -F n $SOCKDIR/* | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
-        else
-            echo "$SOCKDIR not found." >&2
-        fi
-        return 0
+            lsof -F n -u $EUID | grep tmux-$EUID | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
+            return 0
     fi
 
-    if ! $TMUX -L $thename has-session -t "default" 2>/dev/null ; then
+    if ! $TMUX -L "$thename" has-session -t "default" 2>/dev/null ; then
         # server not running, start it
         # create a new detached session, set an option on it
-        $TMUX -L $thename -2 \
+        $TMUX -L "$thename" -2 \
             new-session -d -s "default" \; \
             set -t "default" destroy-unattached off \;
     fi
     mytty=$( /usr/bin/tty )
     sessioninstance="${mytty#/*/} $thename"
-    $TMUX -L $thename -2 new-session -s "$sessioninstance" -t "default" 
+    $TMUX -L "$thename" -2 new-session -s "$sessioninstance" -t "default"
 }
 
