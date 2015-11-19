@@ -21,3 +21,6 @@ au FileType * setl fo-=r
 autocmd FileType python syntax match ErrorMsg '\s\+$'
 autocmd FileType puppet syntax match ErrorMsg '\s\+$'
 autocmd FileType ruby syntax match ErrorMsg '\s\+$'
+
+" fix odd coloring on quickfix entries
+hi Search cterm=NONE ctermfg=grey ctermbg=blue
