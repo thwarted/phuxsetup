@@ -3,7 +3,7 @@
 set ts=4
 set ruler
 set expandtab
-set listchars=tab:➔\ ,eol:$
+set listchars=tab:➔\ ,eol:␤
 set ai
 " hard to read on some terminals
 set nohlsearch
