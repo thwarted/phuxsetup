@@ -21,6 +21,12 @@
 function tmx() {
     local SSHADD=/usr/bin/ssh-add
     local LN=/bin/ln
+    local thename=${1:-default}
+
+    if [ "$thename" = "ls" ]; then
+            lsof -F n -u $EUID | grep tmux-$EUID | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
+            return 0
+    fi
 
     case $TERM in
         screen* )
@@ -31,8 +37,14 @@ function tmx() {
 
     # if the auth socket variable is empty, don't do anything
     if [[ -n "$SSH_AUTH_SOCK" ]]; then
+        local BDIR=/dev/shm/.sshtmux-${USER}-${EUID}
+        if grep -qs '^tmpfs /dev/shm ' /proc/mounts; then
+            if ! mkdir -m 0700 -p ${BDIR} 2>/dev/null ; then
+                BDIR=$HOME
+            fi
+        fi
         # include USER to protect against shared HOME directories (rare)
-        NEWSOCK=$HOME/.agent-sshtmux-$USER.sock
+        local NEWSOCK="$BDIR/.agent-sshtmux-${USER}-${thename}.sock"
         if [[ "$SSH_AUTH_SOCK" != "$NEWSOCK" ]]; then
             # test if the auth sock we have is actually working
             # don't link to a dead socket
@@ -52,14 +64,7 @@ function tmx() {
 
 function _spawn_tmux() {
     local TMUX=/usr/bin/tmux
-
     local thename=${1:-default}
-    local SOCKDIR=tmux-$EUID
-
-    if [ "$thename" = "ls" ]; then
-            lsof -F n -u $EUID | grep tmux-$EUID | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
-            return 0
-    fi
 
     if ! $TMUX -L "$thename" has-session -t "default" 2>/dev/null ; then
         # server not running, start it
