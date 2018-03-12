@@ -24,7 +24,7 @@ function tmx() {
     local thename=${1:-default}
 
     if [ "$thename" = "ls" ]; then
-            lsof -F n -u $EUID | grep tmux-$EUID | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
+            /usr/sbin/lsof -F n -u $EUID | grep tmux-$EUID | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
             return 0
     fi
 
@@ -41,6 +41,8 @@ function tmx() {
         if grep -qs '^tmpfs /dev/shm ' /proc/mounts; then
             if ! mkdir -m 0700 -p ${BDIR} 2>/dev/null ; then
                 BDIR=$HOME
+            else
+                find $BDIR -xtype l -iname ".agent-sshtmux-${USER}*" -delete
             fi
         fi
         # include USER to protect against shared HOME directories (rare)
