@@ -19,13 +19,11 @@
 # convoluted (when using multiple attachments).
 
 function tmx() {
-    local SSHADD=/usr/bin/ssh-add
-    local LN=/bin/ln
-    local LSOF=/usr/bin/lsof
+    local PATH=/usr/bin:/bin:/usr/sbin
     local thename=${1:-default}
 
     if [ "$thename" = "ls" ]; then
-            $LSOF -F n -u $EUID 2>/dev/null | grep tmux-$EUID | sed -e 's/ type=.*$//g;' | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
+            lsof -F n -u $EUID 2>/dev/null | grep tmux-$EUID | sed -e 's/ type=.*$//g;' | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
             return 0
     fi
 
@@ -51,8 +49,8 @@ function tmx() {
         if [[ "$SSH_AUTH_SOCK" != "$NEWSOCK" ]]; then
             # test if the auth sock we have is actually working
             # don't link to a dead socket
-            if $SSHADD -l > /dev/null 2>&1; then
-                $LN -sf "$SSH_AUTH_SOCK" "$NEWSOCK"
+            if ssh-add -l > /dev/null 2>&1; then
+                ln -sf "$SSH_AUTH_SOCK" "$NEWSOCK"
                 SSH_AUTH_SOCK=$NEWSOCK _spawn_tmux "$@"
             else
                 echo "tmx: agent appears to have no keys (agent locked?)" >&2
