@@ -21,10 +21,11 @@
 function tmx() {
     local SSHADD=/usr/bin/ssh-add
     local LN=/bin/ln
+    local LSOF=/usr/bin/lsof
     local thename=${1:-default}
 
     if [ "$thename" = "ls" ]; then
-            /usr/sbin/lsof -F n -u $EUID | grep tmux-$EUID | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
+            $LSOF -F n -u $EUID 2>/dev/null | grep tmux-$EUID | sed -e 's/ type=.*$//g;' | grep '^n' | xargs --no-run-if-empty -n 1 basename | sort | uniq
             return 0
     fi
 
@@ -68,7 +69,7 @@ function _spawn_tmux() {
     local TMUX=/usr/bin/tmux
     local thename=${1:-default}
 
-    if ! $TMUX -L "$thename" has-session -t "default" 2>/dev/null ; then
+    if ! $TMUX -L "$thename" has-session -t "default" ; then
         # server not running, start it
         # create a new detached session, set an option on it
         $TMUX -L "$thename" -2 \
@@ -77,6 +78,5 @@ function _spawn_tmux() {
     fi
     mytty=$( /usr/bin/tty )
     sessioninstance="${mytty#/*/} $thename"
-    $TMUX -L "$thename" -2 new-session -s "$sessioninstance" -t "default"
+    $TMUX -L "$thename" -2 new-session -A -s "$sessioninstance" -t "default"
 }
-
